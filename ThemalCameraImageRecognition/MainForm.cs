@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -124,6 +125,7 @@ namespace ThemalCameraImageRecognition
         private void pictureBox_MouseLeave(object sender, EventArgs e)
         {
             HideLabels();
+            Cursor.Current = Cursors.Default;
         }
 
         private void btnConvertToGray_Click(object sender, EventArgs e)
@@ -180,5 +182,6 @@ namespace ThemalCameraImageRecognition
 
             return newBitmap;
         }
+
     }
 }

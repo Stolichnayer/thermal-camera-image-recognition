@@ -34,17 +34,17 @@ namespace ThemalCameraImageRecognition
             this.label1 = new System.Windows.Forms.Label();
             this.btnProcess = new System.Windows.Forms.Button();
             this.panelImage = new System.Windows.Forms.Panel();
-            this.btnConvertToGray = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.btnConvertToGray = new System.Windows.Forms.Button();
             this.labelPixelsDesc = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.labelIntensity = new System.Windows.Forms.Label();
+            this.labelIntensityDesc = new System.Windows.Forms.Label();
             this.panelColor = new System.Windows.Forms.Panel();
             this.labelColor = new System.Windows.Forms.Label();
             this.labelPixels = new System.Windows.Forms.Label();
             this.labelColorDesc = new System.Windows.Forms.Label();
-            this.labelIntensity = new System.Windows.Forms.Label();
-            this.labelIntensityDesc = new System.Windows.Forms.Label();
             this.panelImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.panel1.SuspendLayout();
@@ -100,10 +100,24 @@ namespace ThemalCameraImageRecognition
             // 
             this.panelImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
             this.panelImage.Controls.Add(this.pictureBox);
-            this.panelImage.Location = new System.Drawing.Point(0, 59);
+            this.panelImage.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.panelImage.Location = new System.Drawing.Point(0, 64);
             this.panelImage.Name = "panelImage";
-            this.panelImage.Size = new System.Drawing.Size(798, 614);
+            this.panelImage.Size = new System.Drawing.Size(798, 609);
             this.panelImage.TabIndex = 4;
+            // 
+            // pictureBox
+            // 
+            this.pictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.pictureBox.Location = new System.Drawing.Point(50, 57);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(700, 500);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox.TabIndex = 0;
+            this.pictureBox.TabStop = false;
+            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             // 
             // btnConvertToGray
             // 
@@ -120,26 +134,13 @@ namespace ThemalCameraImageRecognition
             this.btnConvertToGray.UseVisualStyleBackColor = false;
             this.btnConvertToGray.Click += new System.EventHandler(this.btnConvertToGray_Click);
             // 
-            // pictureBox
-            // 
-            this.pictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pictureBox.Location = new System.Drawing.Point(50, 57);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(700, 500);
-            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
-            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
-            // 
             // labelPixelsDesc
             // 
             this.labelPixelsDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPixelsDesc.AutoSize = true;
             this.labelPixelsDesc.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelPixelsDesc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelPixelsDesc.Location = new System.Drawing.Point(15, 14);
+            this.labelPixelsDesc.Location = new System.Drawing.Point(15, 9);
             this.labelPixelsDesc.Name = "labelPixelsDesc";
             this.labelPixelsDesc.Size = new System.Drawing.Size(79, 21);
             this.labelPixelsDesc.TabIndex = 1;
@@ -152,10 +153,11 @@ namespace ThemalCameraImageRecognition
             this.panel1.Controls.Add(this.btnBrowse);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label1);
+            this.panel1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1107, 59);
+            this.panel1.Size = new System.Drawing.Size(1107, 64);
             this.panel1.TabIndex = 5;
             // 
             // panel2
@@ -169,11 +171,37 @@ namespace ThemalCameraImageRecognition
             this.panel2.Controls.Add(this.labelPixels);
             this.panel2.Controls.Add(this.labelColorDesc);
             this.panel2.Controls.Add(this.labelPixelsDesc);
+            this.panel2.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(798, 59);
+            this.panel2.Location = new System.Drawing.Point(798, 64);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(309, 614);
+            this.panel2.Size = new System.Drawing.Size(309, 609);
             this.panel2.TabIndex = 6;
+            // 
+            // labelIntensity
+            // 
+            this.labelIntensity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelIntensity.AutoSize = true;
+            this.labelIntensity.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIntensity.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelIntensity.Location = new System.Drawing.Point(100, 92);
+            this.labelIntensity.Name = "labelIntensity";
+            this.labelIntensity.Size = new System.Drawing.Size(70, 21);
+            this.labelIntensity.TabIndex = 7;
+            this.labelIntensity.Text = "[R, G, B]";
+            this.labelIntensity.Visible = false;
+            // 
+            // labelIntensityDesc
+            // 
+            this.labelIntensityDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelIntensityDesc.AutoSize = true;
+            this.labelIntensityDesc.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIntensityDesc.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelIntensityDesc.Location = new System.Drawing.Point(15, 92);
+            this.labelIntensityDesc.Name = "labelIntensityDesc";
+            this.labelIntensityDesc.Size = new System.Drawing.Size(79, 21);
+            this.labelIntensityDesc.TabIndex = 6;
+            this.labelIntensityDesc.Text = "Intensity:";
             // 
             // panelColor
             // 
@@ -190,7 +218,7 @@ namespace ThemalCameraImageRecognition
             this.labelColor.AutoSize = true;
             this.labelColor.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelColor.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelColor.Location = new System.Drawing.Point(134, 56);
+            this.labelColor.Location = new System.Drawing.Point(134, 51);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(70, 21);
             this.labelColor.TabIndex = 4;
@@ -203,7 +231,7 @@ namespace ThemalCameraImageRecognition
             this.labelPixels.AutoSize = true;
             this.labelPixels.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelPixels.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelPixels.Location = new System.Drawing.Point(100, 14);
+            this.labelPixels.Location = new System.Drawing.Point(100, 9);
             this.labelPixels.Name = "labelPixels";
             this.labelPixels.Size = new System.Drawing.Size(85, 21);
             this.labelPixels.TabIndex = 3;
@@ -216,36 +244,11 @@ namespace ThemalCameraImageRecognition
             this.labelColorDesc.AutoSize = true;
             this.labelColorDesc.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelColorDesc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelColorDesc.Location = new System.Drawing.Point(15, 57);
+            this.labelColorDesc.Location = new System.Drawing.Point(15, 52);
             this.labelColorDesc.Name = "labelColorDesc";
             this.labelColorDesc.Size = new System.Drawing.Size(55, 21);
             this.labelColorDesc.TabIndex = 2;
             this.labelColorDesc.Text = "Color:";
-            // 
-            // labelIntensity
-            // 
-            this.labelIntensity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelIntensity.AutoSize = true;
-            this.labelIntensity.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelIntensity.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelIntensity.Location = new System.Drawing.Point(100, 97);
-            this.labelIntensity.Name = "labelIntensity";
-            this.labelIntensity.Size = new System.Drawing.Size(70, 21);
-            this.labelIntensity.TabIndex = 7;
-            this.labelIntensity.Text = "[R, G, B]";
-            this.labelIntensity.Visible = false;
-            // 
-            // labelIntensityDesc
-            // 
-            this.labelIntensityDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelIntensityDesc.AutoSize = true;
-            this.labelIntensityDesc.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelIntensityDesc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelIntensityDesc.Location = new System.Drawing.Point(15, 97);
-            this.labelIntensityDesc.Name = "labelIntensityDesc";
-            this.labelIntensityDesc.Size = new System.Drawing.Size(79, 21);
-            this.labelIntensityDesc.TabIndex = 6;
-            this.labelIntensityDesc.Text = "Intensity:";
             // 
             // mainForm
             // 
