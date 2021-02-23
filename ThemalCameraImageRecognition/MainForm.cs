@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace ThemalCameraImageRecognition
 {
     public partial class mainForm : Form
     {
+        private Bitmap _initialImage;
         private Bitmap _currentImage;
         public mainForm()
         {
@@ -40,7 +42,9 @@ namespace ThemalCameraImageRecognition
             Bitmap resizedBitmap = new Bitmap(originalBitmap, new Size( scaledWidth, scaledHeight));
 
             pictureBox.Image = resizedBitmap;
+
             _currentImage = resizedBitmap;
+            _initialImage = resizedBitmap;
             
             pictureBox.Location = new Point(panelImage.Width / 2 - pictureBox.Width / 2,
                 panelImage.Height / 2 - pictureBox.Height / 2);
@@ -73,7 +77,7 @@ namespace ThemalCameraImageRecognition
         
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_currentImage == null)
+            if (_currentImage is null)
                 return;
 
             if (!(Cursor.Current is null)) 
@@ -83,37 +87,70 @@ namespace ThemalCameraImageRecognition
 
             labelPixels.Text = $"[{localMousePosition.X}, {localMousePosition.Y}]";
 
-            if (localMousePosition.X < 0 || localMousePosition.Y < 0)
+            Color pixelColor;
+            try
+            { 
+                pixelColor = _currentImage.GetPixel(localMousePosition.X, localMousePosition.Y);
+            }
+            catch (Exception exception)
+            {
                 return;
+            }
 
-            var pixelColor = _currentImage.GetPixel(localMousePosition.X, localMousePosition.Y);
             labelColor.Text = $"[{pixelColor.R}, {pixelColor.G}, {pixelColor.B}]";
             panelColor.BackColor = pixelColor;
 
+            labelIntensity.Text = $"{Math.Ceiling(pixelColor.GetBrightness() * 255)}";
+
+            ShowLabels();
+        }
+
+        private void ShowLabels()
+        {
             panelColor.Show();
             labelColor.Show();
             labelPixels.Show();
+            labelIntensity.Show();
         }
 
-        private void pictureBox_MouseLeave(object sender, EventArgs e)
+        private void HideLabels()
         {
             panelColor.Hide();
             labelColor.Hide();
             labelPixels.Hide();
+            labelIntensity.Hide();
+        }
+
+        private void pictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            HideLabels();
         }
 
         private void btnConvertToGray_Click(object sender, EventArgs e)
         {
-            if(_currentImage == null)
+            if(_currentImage is null)
                 return;
-            _currentImage = ConvertBlackAndWhite(_currentImage);
-            pictureBox.Image = _currentImage;
+
+            if (_currentImage != _initialImage)
+            {
+                _currentImage = _initialImage;
+                pictureBox.Image = _currentImage;
+                btnConvertToGray.Text = "Convert to grayscale";
+            }
+            else
+            {
+                _currentImage = ConvertToGrayscale(_currentImage);
+                pictureBox.Image = _currentImage;
+                btnConvertToGray.Text = "Restore original";
+            }
+
+
         }
 
-        private Bitmap ConvertBlackAndWhite(Bitmap Image)
+        private static Bitmap ConvertToGrayscale(Bitmap image)
         {
             //create a blank bitmap the same size as original
-            Bitmap newBitmap = new Bitmap(_currentImage);
+            Bitmap newBitmap = new Bitmap(image);
 
             //get a graphics object from the new image
             Graphics g = Graphics.FromImage(newBitmap);
@@ -130,12 +167,14 @@ namespace ThemalCameraImageRecognition
                 });
             //create some image attributes
             ImageAttributes attributes = new ImageAttributes();
+
             //set the color matrix attribute
             attributes.SetColorMatrix(colorMatrix);
-            //draw the original image on the new image
-            //using the grayscale color matrix
-            g.DrawImage(_currentImage, new Rectangle(0, 0, _currentImage.Width, _currentImage.Height),
-                0, 0, _currentImage.Width, _currentImage.Height, GraphicsUnit.Pixel, attributes);
+
+            //draw the original image on the new image using the grayscale color matrix
+            g.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
+                0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+
             //dispose the Graphics object
             g.Dispose();
 
