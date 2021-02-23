@@ -53,12 +53,16 @@ namespace ThemalCameraImageRecognition
             // 
             // btnBrowse
             // 
+            this.btnBrowse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
+            this.btnBrowse.FlatAppearance.BorderSize = 0;
+            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrowse.ForeColor = System.Drawing.Color.White;
             this.btnBrowse.Location = new System.Drawing.Point(333, 20);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(98, 22);
             this.btnBrowse.TabIndex = 0;
             this.btnBrowse.Text = "Browse";
-            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.UseVisualStyleBackColor = false;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // textBox1
@@ -80,13 +84,17 @@ namespace ThemalCameraImageRecognition
             // 
             // btnProcess
             // 
+            this.btnProcess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
             this.btnProcess.Enabled = false;
+            this.btnProcess.FlatAppearance.BorderSize = 0;
+            this.btnProcess.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnProcess.ForeColor = System.Drawing.Color.White;
             this.btnProcess.Location = new System.Drawing.Point(437, 20);
             this.btnProcess.Name = "btnProcess";
             this.btnProcess.Size = new System.Drawing.Size(98, 22);
             this.btnProcess.TabIndex = 3;
             this.btnProcess.Text = "Process";
-            this.btnProcess.UseVisualStyleBackColor = true;
+            this.btnProcess.UseVisualStyleBackColor = false;
             // 
             // panelImage
             // 
@@ -99,13 +107,17 @@ namespace ThemalCameraImageRecognition
             // 
             // btnConvertToGray
             // 
+            this.btnConvertToGray.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
             this.btnConvertToGray.Enabled = false;
+            this.btnConvertToGray.FlatAppearance.BorderSize = 0;
+            this.btnConvertToGray.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnConvertToGray.ForeColor = System.Drawing.Color.White;
             this.btnConvertToGray.Location = new System.Drawing.Point(19, 134);
             this.btnConvertToGray.Name = "btnConvertToGray";
             this.btnConvertToGray.Size = new System.Drawing.Size(112, 22);
             this.btnConvertToGray.TabIndex = 4;
             this.btnConvertToGray.Text = "Convert to grayscale";
-            this.btnConvertToGray.UseVisualStyleBackColor = true;
+            this.btnConvertToGray.UseVisualStyleBackColor = false;
             this.btnConvertToGray.Click += new System.EventHandler(this.btnConvertToGray_Click);
             // 
             // pictureBox
