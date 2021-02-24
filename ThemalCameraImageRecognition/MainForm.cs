@@ -178,6 +178,8 @@ namespace ThemalCameraImageRecognition
             float brightnessSum = 0.0f;
             int counter = 0;
 
+            panelRegionAverage.Hide();
+
             // For all pixels in width, height
             for (int i = 0; i < pictureBox.Width; i++)
             {
@@ -200,8 +202,18 @@ namespace ThemalCameraImageRecognition
             //pictureBox.Image = _currentImage;
 
             // Set intensity value and intesity percentage labels
-            labelRegionIntensity.Text = (CalculateAverage(brightnessSum, counter) * 255).ToString("0.0");
-            labelRegionIntensityPercent.Text = (CalculateAverage(brightnessSum, counter) * 100).ToString("0.00") + "%";
+            float averageBrightness = CalculateAverage(brightnessSum, counter);
+
+            // If average brightness could not be calculated
+            if ((int)averageBrightness == -1)
+            {
+                panelRegionAverage.Hide();
+                Debug.WriteLine("Brigntess = -1");
+                return;
+            }
+
+            labelRegionIntensity.Text = (averageBrightness * 255).ToString("0.0");
+            labelRegionIntensityPercent.Text = (averageBrightness * 100).ToString("0.00") + "%";
 
             // Calculate average RGB color TODO: check if there is a better way to calculate RGB color average
             int averageR = (int)CalculateAverage(R, counter);
@@ -211,12 +223,14 @@ namespace ThemalCameraImageRecognition
             // Update Region average color and panel color
             labelRegionColor.Text = $"[{averageR}, {averageG}, {averageB}]";
             panelRegionColor.BackColor = Color.FromArgb(255, averageR, averageG, averageB);
+
+            panelRegionAverage.Show();
         }
 
         // Just a simple average calculator
-        private float CalculateAverage(float sum, int counter)
+        private static float CalculateAverage(float sum, int counter)
         {
-            return sum / counter;
+            return counter != 0 ? sum / counter : -1.0f;
         }
 
         // Algorithm that finds if the given point is inside the polygon defined by 2nd parameter's points
@@ -248,6 +262,29 @@ namespace ThemalCameraImageRecognition
                             ((pointX - endX) < (pointY - endY) * (startX - endX) / (startY - endY)) ;
             }
             return isInside;
+        }
+
+        private void DrawPolygon(PointF[] points)
+        {
+            Graphics g = pictureBox.CreateGraphics();
+            
+            // Create pen
+            Pen pen = new Pen(Color.White, 2);
+
+            // Create solid brush.
+            SolidBrush blueBrush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
+
+            // Draw polygon outline
+            g.DrawPolygon(pen, points);
+
+            // Draw polygon area
+            g.FillPolygon(blueBrush, points);
+
+            FindPixelsInSelectedRegion();
+
+            // Show selected region average info panel
+            panelRegionAverage.Show();
+            
         }
 
         //============================================ Events ============================================
@@ -341,26 +378,8 @@ namespace ThemalCameraImageRecognition
                 panelRegionAverage.Hide();
                 return;
             }
-                
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                // Create pen
-                Pen pen = new Pen(Color.White, 2);
 
-                // Create solid brush.
-                SolidBrush blueBrush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
-
-                // Draw polygon outline
-                g.DrawPolygon(pen, _points.ToArray());
-
-                // Draw polygon area
-                g.FillPolygon(blueBrush, _points.ToArray());
-
-                FindPixelsInSelectedRegion();
-
-                // Show selected region average info panel
-                panelRegionAverage.Show();
-            }
+            DrawPolygon(_points.ToArray());
         }
     }
 }
