@@ -1,7 +1,7 @@
 ﻿
 namespace ThemalCameraImageRecognition
 {
-    partial class mainForm
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -96,6 +96,9 @@ namespace ThemalCameraImageRecognition
             // 
             // panelImage
             // 
+            this.panelImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
             this.panelImage.Controls.Add(this.pictureBox);
             this.panelImage.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -384,7 +387,7 @@ namespace ThemalCameraImageRecognition
             this.panelPixelColor.TabIndex = 5;
             this.panelPixelColor.Visible = false;
             // 
-            // mainForm
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -392,11 +395,10 @@ namespace ThemalCameraImageRecognition
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelImage);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.KeyPreview = true;
-            this.Name = "mainForm";
+            this.Name = "MainForm";
             this.Text = "Thermal Camera Image Recognition";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mainForm_KeyDown);
             this.panelImage.ResumeLayout(false);
             this.panelImage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
