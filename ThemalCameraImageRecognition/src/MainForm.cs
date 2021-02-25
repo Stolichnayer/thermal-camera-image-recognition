@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ThemalCameraImageRecognition
@@ -99,6 +100,8 @@ namespace ThemalCameraImageRecognition
             labelPixels.Show();
             labelPixelIntensity.Show();
             labelIntensityPercent.Show();
+            panelBar2.Show();
+            panelProgressBar2.Show();
         }
 
         private void HidePixelInfoLabels()
@@ -108,6 +111,8 @@ namespace ThemalCameraImageRecognition
             labelPixels.Hide();
             labelPixelIntensity.Hide();
             labelIntensityPercent.Hide();
+            panelBar2.Hide();
+            panelProgressBar2.Hide();
         }
 
         // Converts the image loaded to grayscale
@@ -167,7 +172,10 @@ namespace ThemalCameraImageRecognition
 
             labelPixelIntensity.Text = $"{Math.Round(pixelColor.GetBrightness() * 255)}";
 
-            labelIntensityPercent.Text = $"{Math.Round(pixelColor.GetBrightness() * 100)}%";
+            //labelIntensityPercent.Text = $"{Math.Round(pixelColor.GetBrightness() * 100)}%";
+            labelIntensityPercent.Text = (pixelColor.GetBrightness() * 100).ToString("0.00") + "%";
+  
+            panelBar2.Width = (int)(pixelColor.GetBrightness() * panelProgressBar2.Width);
         }
         
         private void FindPixelsInSelectedRegion()
@@ -224,8 +232,10 @@ namespace ThemalCameraImageRecognition
                 return;
             }
 
-            labelRegionIntensity.Text = (averageBrightness * 255).ToString("0.0");
+            labelRegionIntensity.Text = (averageBrightness * 255).ToString("0");
             labelRegionIntensityPercent.Text = (averageBrightness * 100).ToString("0.00") + "%";
+
+            panelBar1.Width = (int)(averageBrightness * panelProgressBar1.Width);
 
             // Calculate average RGB color TODO: check if there is a better way to calculate RGB color average
             int averageR = (int)CalculateAverage(R, counter);
@@ -301,7 +311,7 @@ namespace ThemalCameraImageRecognition
             
         }
 
-        //============================================ Events ============================================
+//============================================ Events =============================================
 
 
         private void btnConvertToGray_Click(object sender, EventArgs e)
@@ -392,6 +402,31 @@ namespace ThemalCameraImageRecognition
 
             DrawPolygon(_points.ToArray());
             FindPixelsInSelectedRegion();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+//========================================== DLL IMPORTS ===========================================
+
+        // Add Drag Operation to titlebar
+        [DllImport("user32.dll", EntryPoint = "ReleaseCapture")]
+        private static extern void ReleaseCapture();
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
+        }
+
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
         }
     }
 }
