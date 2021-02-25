@@ -29,6 +29,7 @@ namespace ThemalCameraImageRecognition
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnBrowse = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -55,12 +56,14 @@ namespace ThemalCameraImageRecognition
             this.labelPixelColor = new System.Windows.Forms.Label();
             this.labelIntensityDesc = new System.Windows.Forms.Label();
             this.panelPixelColor = new System.Windows.Forms.Panel();
+            this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.panelImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panelRegionAverage.SuspendLayout();
             this.panelSinglePixel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBrowse
@@ -178,6 +181,7 @@ namespace ThemalCameraImageRecognition
             // panelRegionAverage
             // 
             this.panelRegionAverage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(38)))), ((int)(((byte)(42)))));
+            this.panelRegionAverage.Controls.Add(this.pictureBoxLoading);
             this.panelRegionAverage.Controls.Add(this.label9);
             this.panelRegionAverage.Controls.Add(this.panelRegionColor);
             this.panelRegionAverage.Controls.Add(this.labelRegionIntensityPercent);
@@ -387,6 +391,17 @@ namespace ThemalCameraImageRecognition
             this.panelPixelColor.TabIndex = 5;
             this.panelPixelColor.Visible = false;
             // 
+            // pictureBoxLoading
+            // 
+            this.pictureBoxLoading.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLoading.Image")));
+            this.pictureBoxLoading.Location = new System.Drawing.Point(3, 3);
+            this.pictureBoxLoading.Name = "pictureBoxLoading";
+            this.pictureBoxLoading.Size = new System.Drawing.Size(303, 133);
+            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxLoading.TabIndex = 12;
+            this.pictureBoxLoading.TabStop = false;
+            this.pictureBoxLoading.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -409,6 +424,7 @@ namespace ThemalCameraImageRecognition
             this.panelRegionAverage.PerformLayout();
             this.panelSinglePixel.ResumeLayout(false);
             this.panelSinglePixel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -440,6 +456,7 @@ namespace ThemalCameraImageRecognition
         private System.Windows.Forms.Panel panelSinglePixel;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.PictureBox pictureBoxLoading;
     }
 }
 

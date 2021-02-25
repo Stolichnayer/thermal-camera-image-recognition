@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ThemalCameraImageRecognition
 {
     public partial class MainForm : Form
     {
-        private Bitmap _initialImage;                   // The image that user initially loads into program
-        private Bitmap _currentImage;                   // THe image that is currently in pictureBox
-        private Point _latestPoint;                     // Needed for pen drawing
-        private List<PointF> _points = new();           // List of points that will define a polygon
-        private int _polygonDrawPixelThreshold = 10;    // Minimum pixels required to start polygon drawing
-
+        private Bitmap _initialImage;                       // The image that user initially loads into program
+        private Bitmap _currentImage;                       // THe image that is currently in pictureBox
+        private Point _latestPoint;                         // Needed for pen drawing
+        private readonly List<PointF> _points = new();      // List of points that will define a polygon
+        private const int PolygonDrawPixelThreshold = 10;   // Minimum pixels required to start polygon drawing
+        private bool _isReadyToDrawNextPolygon = true;
+        
         public MainForm()
         {
             InitializeComponent();
@@ -111,6 +110,7 @@ namespace ThemalCameraImageRecognition
             labelIntensityPercent.Hide();
         }
 
+        // Converts the image loaded to grayscale
         private static Bitmap ConvertToGrayscale(Bitmap image)
         {
             // Create a blank bitmap the same size as original
@@ -121,11 +121,11 @@ namespace ThemalCameraImageRecognition
 
             // Create the grayscale ColorMatrix
             ColorMatrix colorMatrix = new ColorMatrix(
-                new float[][]
+                new[]
                 {
-                    new float[] {.3f, .3f, .3f, 0, 0},
-                    new float[] {.59f, .59f, .59f, 0, 0},
-                    new float[] {.11f, .11f, .11f, 0, 0},
+                    new[] {.3f, .3f, .3f, 0, 0},
+                    new[] {.59f, .59f, .59f, 0, 0},
+                    new[] {.11f, .11f, .11f, 0, 0},
                     new float[] {0, 0, 0, 1, 0},
                     new float[] {0, 0, 0, 0, 1}
                 });
@@ -171,14 +171,25 @@ namespace ThemalCameraImageRecognition
         }
         
         private void FindPixelsInSelectedRegion()
-        { 
-            float R = 0;
-            float G = 0;
-            float B = 0;
+        {
+            panelRegionAverage.Hide();
+            pictureBoxLoading.Show();
+
+            //Task.Run(() => { Invoke((MethodInvoker) delegate { pictureBoxLoading.Show(); }); } );
+
+            /*Task.Delay(1000).ContinueWith(t =>
+            {
+                Invoke((MethodInvoker) delegate
+                {
+                    pictureBoxLoading.Show();
+                });
+            });*/
+
+            _isReadyToDrawNextPolygon = false;
+            Bitmap bitmap = new Bitmap(_currentImage);
+            float R = 0, G = 0, B = 0;
             float brightnessSum = 0.0f;
             int counter = 0;
-
-            panelRegionAverage.Hide();
 
             // For all pixels in width, height
             for (int i = 0; i < pictureBox.Width; i++)
@@ -190,25 +201,26 @@ namespace ThemalCameraImageRecognition
                     {
                         //_currentImage.SetPixel(i, j, Color.Black);
 
-                        brightnessSum += _currentImage.GetPixel(i, j).GetBrightness();
-                        R += _currentImage.GetPixel(i, j).R;
-                        G += _currentImage.GetPixel(i, j).G;
-                        B += _currentImage.GetPixel(i, j).B;
+                        brightnessSum += bitmap.GetPixel(i, j).GetBrightness();
+                        R += bitmap.GetPixel(i, j).R;
+                        G += bitmap.GetPixel(i, j).G;
+                        B += bitmap.GetPixel(i, j).B;
                         counter++;
                     }
                 }
             }
-
-            //pictureBox.Image = _currentImage;
-
+          
+            pictureBoxLoading.Hide();
+            panelRegionAverage.Show();
+            
             // Set intensity value and intesity percentage labels
             float averageBrightness = CalculateAverage(brightnessSum, counter);
 
             // If average brightness could not be calculated
             if ((int)averageBrightness == -1)
             {
-                panelRegionAverage.Hide();
                 Debug.WriteLine("Brigntess = -1");
+                _isReadyToDrawNextPolygon = true;
                 return;
             }
 
@@ -219,12 +231,12 @@ namespace ThemalCameraImageRecognition
             int averageR = (int)CalculateAverage(R, counter);
             int averageG = (int)CalculateAverage(G, counter);
             int averageB = (int)CalculateAverage(B, counter);
-            
+        
             // Update Region average color and panel color
             labelRegionColor.Text = $"[{averageR}, {averageG}, {averageB}]";
             panelRegionColor.BackColor = Color.FromArgb(255, averageR, averageG, averageB);
 
-            panelRegionAverage.Show();
+            _isReadyToDrawNextPolygon = true;
         }
 
         // Just a simple average calculator
@@ -237,6 +249,10 @@ namespace ThemalCameraImageRecognition
         public bool IsPointInPolygon(PointF point, PointF[] polygon)
         {
             int polygonLength = polygon.Length, i = 0;
+
+            if (polygonLength <= 0)
+                return false;
+
             bool isInside = false;
 
             // x, y for tested point.
@@ -266,7 +282,7 @@ namespace ThemalCameraImageRecognition
 
         private void DrawPolygon(PointF[] points)
         {
-            Graphics g = pictureBox.CreateGraphics();
+            Graphics graphics = pictureBox.CreateGraphics();
             
             // Create pen
             Pen pen = new Pen(Color.White, 2);
@@ -275,12 +291,10 @@ namespace ThemalCameraImageRecognition
             SolidBrush blueBrush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
 
             // Draw polygon outline
-            g.DrawPolygon(pen, points);
+            graphics.DrawPolygon(pen, points);
 
             // Draw polygon area
-            g.FillPolygon(blueBrush, points);
-
-            FindPixelsInSelectedRegion();
+            graphics.FillPolygon(blueBrush, points);
 
             // Show selected region average info panel
             panelRegionAverage.Show();
@@ -289,7 +303,7 @@ namespace ThemalCameraImageRecognition
 
         //============================================ Events ============================================
 
-        // Converts the image loaded to grayscale
+
         private void btnConvertToGray_Click(object sender, EventArgs e)
         {
             if(_currentImage is null)
@@ -319,21 +333,20 @@ namespace ThemalCameraImageRecognition
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_currentImage is null)
+            if (_currentImage is null || !_isReadyToDrawNextPolygon)
                 return;
 
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
             {
-                using (Graphics g = pictureBox.CreateGraphics())
-                {
-                    // Draw next line and...
-                    g.DrawLine(Pens.White, _latestPoint, e.Location);
+                Graphics graphics = pictureBox.CreateGraphics();
+                
+                // Draw next line and...
+                graphics.DrawLine(Pens.White, _latestPoint, e.Location);
 
-                    // ... Remember the location
-                    _latestPoint = e.Location;
+                // ... Remember the location
+                _latestPoint = e.Location;
 
-                    _points.Add(e.Location);
-                }
+                _points.Add(e.Location);
             }
 
             if (!(Cursor.Current is null)) 
@@ -355,31 +368,30 @@ namespace ThemalCameraImageRecognition
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if (_currentImage is null)
+            if (_currentImage is null || !_isReadyToDrawNextPolygon)
                 return;
 
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-            {
-                // Clear point list to create a new polygon
-                _points.Clear();
+            // Clear point list to create a new polygon
+            _points.Clear();
 
-                // Remember the location where the button was pressed
-                _latestPoint = e.Location;
+            // Remember the location where the button was pressed
+            _latestPoint = e.Location;
 
-                // Invalidate component to force repaint to clear last graphics
-                pictureBox.Invalidate();
-            }
+            // Invalidate component to force repaint to clear last graphics
+            pictureBox.Invalidate();
+            
         }
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_points.Count < _polygonDrawPixelThreshold || _currentImage is null)
+            if (_points.Count < PolygonDrawPixelThreshold || _currentImage is null)
             {
                 panelRegionAverage.Hide();
                 return;
             }
 
             DrawPolygon(_points.ToArray());
+            FindPixelsInSelectedRegion();
         }
     }
 }
