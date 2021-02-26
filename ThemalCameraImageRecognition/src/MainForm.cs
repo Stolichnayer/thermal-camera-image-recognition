@@ -10,22 +10,28 @@ namespace ThemalCameraImageRecognition
 {
     public partial class MainForm : Form
     {
+        private const int PolygonDrawPixelThreshold = 10;   // Minimum pixels required to start polygon drawing
+        private const int NewBitmapWidth = 640;             // The width that the new resized bitmap will have
+        private const int NewBitmapHeight = 480;            // The height that the new resized bitmap will have
+
         private Bitmap _initialImage;                       // The image that user initially loads into program
         private Bitmap _currentImage;                       // THe image that is currently in pictureBox
         private Point _latestPoint;                         // Needed for pen drawing
         private readonly List<PointF> _points = new();      // List of points that will define a polygon
-        private const int PolygonDrawPixelThreshold = 10;   // Minimum pixels required to start polygon drawing
-        private bool _isReadyToDrawNextPolygon = true;
+        private bool _isReadyToDrawNextPolygon = true;      // Polygon drawing lock
         
         public MainForm()
         {
             InitializeComponent();
         }
 
-        private void CreateAndShowBitmapImage()
+        private void LoadBitmapImage()
         {
+            // If the path textbox is empty
             if (textBox1.Text == "")
+            {
                 return;
+            }
 
             Bitmap originalBitmap;
             // Possible FileNotFoundException if the path doesn't refer to an image
@@ -40,15 +46,13 @@ namespace ThemalCameraImageRecognition
                 return;
             }
 
-            float width = 640;
-            float height = 480;
-
-            Bitmap resizedBitmap = GetResizedBitmap(originalBitmap, width, height);
+            Bitmap resizedBitmap = GetResizedBitmap(originalBitmap, NewBitmapWidth, NewBitmapHeight);
 
             pictureBox.Image = resizedBitmap;
             _currentImage = resizedBitmap;
             _initialImage = resizedBitmap;
             
+            // Center the loaded image in the panelImage
             pictureBox.Location = new Point(panelImage.Width / 2 - pictureBox.Width / 2,
                 panelImage.Height / 2 - pictureBox.Height / 2);
 
@@ -68,7 +72,8 @@ namespace ThemalCameraImageRecognition
             return resizedBitmap;
         }
 
-        private bool CreateAndOpenFileDialog()
+        // Create and show dialog to select an image
+        private bool ShowOpenFileDialog()
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog  
             {  
@@ -93,6 +98,7 @@ namespace ThemalCameraImageRecognition
             return false;
         }
 
+        // Shows all information about a single pixel (First panel)
         private void ShowPixelInfoLabels()
         {
             panelPixelColor.Show();
@@ -104,6 +110,7 @@ namespace ThemalCameraImageRecognition
             panelProgressBar2.Show();
         }
 
+        // Hides all information about a single pixel (First panel)
         private void HidePixelInfoLabels()
         {
             panelPixelColor.Hide();
@@ -150,34 +157,41 @@ namespace ThemalCameraImageRecognition
             return newBitmap;
         }
 
+        // Calculate image's pixel color that cursor is pointing to and update the label values
         private void UpdatePixelInfoLabels(Point localMousePosition)
         {
-            labelPixels.Text = $"[{localMousePosition.X}, {localMousePosition.Y}]";
-
-            // Get the color of the pixel that cursor is pointing to
-            Color pixelColor;
-            try
+            // Avoid possible Exception because of wrong parameters, due to negative mouse position or outside of image
+            if (localMousePosition.X < 0 || 
+                localMousePosition.Y < 0 ||
+                localMousePosition.X >= _currentImage.Width || 
+                localMousePosition.Y >= _currentImage.Height)
             {
-                pixelColor = _currentImage.GetPixel(localMousePosition.X, localMousePosition.Y);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
                 return;
             }
 
-            // Update labels and color panel
+            // Update cursor's location label info
+            labelPixels.Text = $"[{localMousePosition.X}, {localMousePosition.Y}]";
+
+            // Get the color of the pixel that cursor is pointing to
+            Color pixelColor = _currentImage.GetPixel(localMousePosition.X, localMousePosition.Y);
+
+            // Update RGB code label  
             labelPixelColor.Text = $"[{pixelColor.R}, {pixelColor.G}, {pixelColor.B}]";
+
+            // Paint the panel to the corresponding RGB color
             panelPixelColor.BackColor = pixelColor;
 
+            // Update intensity label value
             labelPixelIntensity.Text = $"{Math.Round(pixelColor.GetBrightness() * 255)}";
 
-            //labelIntensityPercent.Text = $"{Math.Round(pixelColor.GetBrightness() * 100)}%";
+            // Update intensity percentage label value
             labelIntensityPercent.Text = (pixelColor.GetBrightness() * 100).ToString("0.00") + "%";
   
+            // Resize percentage bar to the appropriate width to depict the percentage optically
             panelBar2.Width = (int)(pixelColor.GetBrightness() * panelProgressBar2.Width);
         }
         
+
         private void FindPixelsInSelectedRegion()
         {
             panelRegionAverage.Hide();
@@ -252,6 +266,7 @@ namespace ThemalCameraImageRecognition
         // Just a simple average calculator
         private static float CalculateAverage(float sum, int counter)
         {
+            // If counter equals zero, dont calculate and return a negative float number
             return counter != 0 ? sum / counter : -1.0f;
         }
 
@@ -290,6 +305,7 @@ namespace ThemalCameraImageRecognition
             return isInside;
         }
 
+        // Draw a polygon defined by the points that the cursor has passed over
         private void DrawPolygon(PointF[] points)
         {
             Graphics graphics = pictureBox.CreateGraphics();
@@ -297,7 +313,7 @@ namespace ThemalCameraImageRecognition
             // Create pen
             Pen pen = new Pen(Color.White, 2);
 
-            // Create solid brush.
+            // Create solid brush with a color to fill the polygon
             SolidBrush blueBrush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
 
             // Draw polygon outline
@@ -308,17 +324,19 @@ namespace ThemalCameraImageRecognition
 
             // Show selected region average info panel
             panelRegionAverage.Show();
-            
         }
+
 
 //============================================ Events =============================================
 
-
         private void btnConvertToGray_Click(object sender, EventArgs e)
         {
-            if(_currentImage is null)
+            if (_currentImage is null)
+            {
                 return;
-
+            }
+                
+            // Toggle convertion buttons
             if (_currentImage != _initialImage)
             {
                 _currentImage = _initialImage;
@@ -335,9 +353,9 @@ namespace ThemalCameraImageRecognition
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (CreateAndOpenFileDialog())
+            if (ShowOpenFileDialog())
             {
-                CreateAndShowBitmapImage();
+                LoadBitmapImage();
             }
         }
 
@@ -379,8 +397,10 @@ namespace ThemalCameraImageRecognition
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (_currentImage is null || !_isReadyToDrawNextPolygon)
+            {
                 return;
-
+            }
+                
             // Clear point list to create a new polygon
             _points.Clear();
 
@@ -389,12 +409,11 @@ namespace ThemalCameraImageRecognition
 
             // Invalidate component to force repaint to clear last graphics
             pictureBox.Invalidate();
-            
         }
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_points.Count < PolygonDrawPixelThreshold || _currentImage is null)
+            if (_currentImage is null || _points.Count < PolygonDrawPixelThreshold)
             {
                 panelRegionAverage.Hide();
                 return;
@@ -408,16 +427,7 @@ namespace ThemalCameraImageRecognition
         {
             Application.Exit();
         }
-
-//========================================== DLL IMPORTS ===========================================
-
-        // Add Drag Operation to titlebar
-        [DllImport("user32.dll", EntryPoint = "ReleaseCapture")]
-        private static extern void ReleaseCapture();
-
-        [DllImport("user32.dll", EntryPoint = "SendMessage")]
-        private static extern void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
-
+        
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
             ReleaseCapture();
@@ -428,5 +438,15 @@ namespace ThemalCameraImageRecognition
         {
             WindowState = FormWindowState.Minimized;
         }
+
+
+//========================================== DLL Imports ===========================================
+
+        // Add Drag Operation to titlebar
+        [DllImport("user32.dll", EntryPoint = "ReleaseCapture")]
+        private static extern void ReleaseCapture();
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
     }
 }

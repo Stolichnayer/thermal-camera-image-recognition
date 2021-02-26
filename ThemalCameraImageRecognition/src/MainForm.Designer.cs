@@ -41,8 +41,10 @@ namespace ThemalCameraImageRecognition
             this.btnMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panelRegionAverage = new System.Windows.Forms.Panel();
             this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
+            this.panelRegionAverage = new System.Windows.Forms.Panel();
+            this.panelBar1 = new System.Windows.Forms.Panel();
+            this.panelProgressBar1 = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
             this.panelRegionColor = new System.Windows.Forms.Panel();
             this.labelRegionIntensityPercent = new System.Windows.Forms.Label();
@@ -51,6 +53,8 @@ namespace ThemalCameraImageRecognition
             this.labelRegionColor = new System.Windows.Forms.Label();
             this.labelRegionIntensity = new System.Windows.Forms.Label();
             this.panelSinglePixel = new System.Windows.Forms.Panel();
+            this.panelBar2 = new System.Windows.Forms.Panel();
+            this.panelProgressBar2 = new System.Windows.Forms.Panel();
             this.label10 = new System.Windows.Forms.Label();
             this.labelIntensityPercent = new System.Windows.Forms.Label();
             this.labelColorDesc = new System.Windows.Forms.Label();
@@ -59,16 +63,12 @@ namespace ThemalCameraImageRecognition
             this.labelPixelColor = new System.Windows.Forms.Label();
             this.labelIntensityDesc = new System.Windows.Forms.Label();
             this.panelPixelColor = new System.Windows.Forms.Panel();
-            this.panelProgressBar1 = new System.Windows.Forms.Panel();
-            this.panelBar1 = new System.Windows.Forms.Panel();
-            this.panelBar2 = new System.Windows.Forms.Panel();
-            this.panelProgressBar2 = new System.Windows.Forms.Panel();
             this.panelImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.panelRegionAverage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
+            this.panelRegionAverage.SuspendLayout();
             this.panelSinglePixel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,8 +77,8 @@ namespace ThemalCameraImageRecognition
             this.btnBrowse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
             this.btnBrowse.FlatAppearance.BorderSize = 0;
             this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBrowse.ForeColor = System.Drawing.Color.White;
-            this.btnBrowse.Location = new System.Drawing.Point(333, 20);
+            this.btnBrowse.ForeColor = System.Drawing.Color.Gainsboro;
+            this.btnBrowse.Location = new System.Drawing.Point(348, 21);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(98, 22);
             this.btnBrowse.TabIndex = 0;
@@ -88,18 +88,23 @@ namespace ThemalCameraImageRecognition
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(73, 20);
+            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(49)))), ((int)(((byte)(54)))));
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.textBox1.Location = new System.Drawing.Point(87, 21);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(254, 20);
+            this.textBox1.Size = new System.Drawing.Size(254, 21);
             this.textBox1.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label1.Location = new System.Drawing.Point(21, 23);
+            this.label1.Location = new System.Drawing.Point(27, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 13);
+            this.label1.Size = new System.Drawing.Size(54, 20);
             this.label1.TabIndex = 2;
             this.label1.Text = "Image";
             // 
@@ -137,8 +142,8 @@ namespace ThemalCameraImageRecognition
             this.btnConvertToGray.Enabled = false;
             this.btnConvertToGray.FlatAppearance.BorderSize = 0;
             this.btnConvertToGray.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnConvertToGray.ForeColor = System.Drawing.Color.White;
-            this.btnConvertToGray.Location = new System.Drawing.Point(437, 20);
+            this.btnConvertToGray.ForeColor = System.Drawing.Color.Gainsboro;
+            this.btnConvertToGray.Location = new System.Drawing.Point(452, 21);
             this.btnConvertToGray.Name = "btnConvertToGray";
             this.btnConvertToGray.Size = new System.Drawing.Size(112, 22);
             this.btnConvertToGray.TabIndex = 4;
@@ -182,9 +187,9 @@ namespace ThemalCameraImageRecognition
             this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMinimize.ForeColor = System.Drawing.Color.White;
             this.btnMinimize.Image = ((System.Drawing.Image)(resources.GetObject("btnMinimize.Image")));
-            this.btnMinimize.Location = new System.Drawing.Point(1061, 0);
+            this.btnMinimize.Location = new System.Drawing.Point(1048, 0);
             this.btnMinimize.Name = "btnMinimize";
-            this.btnMinimize.Size = new System.Drawing.Size(24, 26);
+            this.btnMinimize.Size = new System.Drawing.Size(30, 30);
             this.btnMinimize.TabIndex = 6;
             this.btnMinimize.UseVisualStyleBackColor = false;
             this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
@@ -196,9 +201,9 @@ namespace ThemalCameraImageRecognition
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
-            this.btnClose.Location = new System.Drawing.Point(1082, 0);
+            this.btnClose.Location = new System.Drawing.Point(1077, 0);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(25, 26);
+            this.btnClose.Size = new System.Drawing.Size(30, 30);
             this.btnClose.TabIndex = 5;
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -215,6 +220,17 @@ namespace ThemalCameraImageRecognition
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(309, 609);
             this.panel2.TabIndex = 6;
+            // 
+            // pictureBoxLoading
+            // 
+            this.pictureBoxLoading.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLoading.Image")));
+            this.pictureBoxLoading.Location = new System.Drawing.Point(0, 315);
+            this.pictureBoxLoading.Name = "pictureBoxLoading";
+            this.pictureBoxLoading.Size = new System.Drawing.Size(309, 140);
+            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxLoading.TabIndex = 12;
+            this.pictureBoxLoading.TabStop = false;
+            this.pictureBoxLoading.Visible = false;
             // 
             // panelRegionAverage
             // 
@@ -235,16 +251,21 @@ namespace ThemalCameraImageRecognition
             this.panelRegionAverage.TabIndex = 11;
             this.panelRegionAverage.Visible = false;
             // 
-            // pictureBoxLoading
+            // panelBar1
             // 
-            this.pictureBoxLoading.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLoading.Image")));
-            this.pictureBoxLoading.Location = new System.Drawing.Point(0, 315);
-            this.pictureBoxLoading.Name = "pictureBoxLoading";
-            this.pictureBoxLoading.Size = new System.Drawing.Size(303, 133);
-            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBoxLoading.TabIndex = 12;
-            this.pictureBoxLoading.TabStop = false;
-            this.pictureBoxLoading.Visible = false;
+            this.panelBar1.BackColor = System.Drawing.Color.MediumPurple;
+            this.panelBar1.Location = new System.Drawing.Point(238, 101);
+            this.panelBar1.Name = "panelBar1";
+            this.panelBar1.Size = new System.Drawing.Size(37, 15);
+            this.panelBar1.TabIndex = 19;
+            // 
+            // panelProgressBar1
+            // 
+            this.panelProgressBar1.BackColor = System.Drawing.Color.Gainsboro;
+            this.panelProgressBar1.Location = new System.Drawing.Point(237, 100);
+            this.panelProgressBar1.Name = "panelProgressBar1";
+            this.panelProgressBar1.Size = new System.Drawing.Size(58, 17);
+            this.panelProgressBar1.TabIndex = 18;
             // 
             // label9
             // 
@@ -346,6 +367,24 @@ namespace ThemalCameraImageRecognition
             this.panelSinglePixel.Size = new System.Drawing.Size(309, 170);
             this.panelSinglePixel.TabIndex = 10;
             // 
+            // panelBar2
+            // 
+            this.panelBar2.BackColor = System.Drawing.Color.MediumPurple;
+            this.panelBar2.Location = new System.Drawing.Point(237, 133);
+            this.panelBar2.Name = "panelBar2";
+            this.panelBar2.Size = new System.Drawing.Size(37, 15);
+            this.panelBar2.TabIndex = 21;
+            this.panelBar2.Visible = false;
+            // 
+            // panelProgressBar2
+            // 
+            this.panelProgressBar2.BackColor = System.Drawing.Color.Gainsboro;
+            this.panelProgressBar2.Location = new System.Drawing.Point(236, 132);
+            this.panelProgressBar2.Name = "panelProgressBar2";
+            this.panelProgressBar2.Size = new System.Drawing.Size(58, 17);
+            this.panelProgressBar2.TabIndex = 20;
+            this.panelProgressBar2.Visible = false;
+            // 
             // label10
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -443,40 +482,6 @@ namespace ThemalCameraImageRecognition
             this.panelPixelColor.TabIndex = 5;
             this.panelPixelColor.Visible = false;
             // 
-            // panelProgressBar1
-            // 
-            this.panelProgressBar1.BackColor = System.Drawing.Color.Gainsboro;
-            this.panelProgressBar1.Location = new System.Drawing.Point(237, 100);
-            this.panelProgressBar1.Name = "panelProgressBar1";
-            this.panelProgressBar1.Size = new System.Drawing.Size(58, 17);
-            this.panelProgressBar1.TabIndex = 18;
-            // 
-            // panelBar1
-            // 
-            this.panelBar1.BackColor = System.Drawing.Color.MediumPurple;
-            this.panelBar1.Location = new System.Drawing.Point(238, 101);
-            this.panelBar1.Name = "panelBar1";
-            this.panelBar1.Size = new System.Drawing.Size(37, 15);
-            this.panelBar1.TabIndex = 19;
-            // 
-            // panelBar2
-            // 
-            this.panelBar2.BackColor = System.Drawing.Color.MediumPurple;
-            this.panelBar2.Location = new System.Drawing.Point(237, 133);
-            this.panelBar2.Name = "panelBar2";
-            this.panelBar2.Size = new System.Drawing.Size(37, 15);
-            this.panelBar2.TabIndex = 21;
-            this.panelBar2.Visible = false;
-            // 
-            // panelProgressBar2
-            // 
-            this.panelProgressBar2.BackColor = System.Drawing.Color.Gainsboro;
-            this.panelProgressBar2.Location = new System.Drawing.Point(236, 132);
-            this.panelProgressBar2.Name = "panelProgressBar2";
-            this.panelProgressBar2.Size = new System.Drawing.Size(58, 17);
-            this.panelProgressBar2.TabIndex = 20;
-            this.panelProgressBar2.Visible = false;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -495,9 +500,9 @@ namespace ThemalCameraImageRecognition
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             this.panelRegionAverage.ResumeLayout(false);
             this.panelRegionAverage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             this.panelSinglePixel.ResumeLayout(false);
             this.panelSinglePixel.PerformLayout();
             this.ResumeLayout(false);
