@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ThemalCameraImageRecognition
@@ -19,7 +20,17 @@ namespace ThemalCameraImageRecognition
         private Point _latestPoint;                         // Needed for pen drawing
         private readonly List<PointF> _points = new();      // List of points that will define a polygon
         private bool _isReadyToDrawNextPolygon = true;      // Polygon drawing lock
+        private bool _arePointsCleared = true;
         
+        private struct ColorSumValues
+        {
+            public float R;
+            public float G;
+            public float B;
+            public float Brightness;
+            public int Counter;
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -191,52 +202,28 @@ namespace ThemalCameraImageRecognition
             panelBar2.Width = (int)(pixelColor.GetBrightness() * panelProgressBar2.Width);
         }
         
+      /*Invoke((MethodInvoker) delegate
+            {
+                //pictureBoxLoading.Show();
+            });*/
 
-        private void FindPixelsInSelectedRegion()
+      //Task.Run(() => { Invoke((MethodInvoker) delegate { pictureBoxLoading.Show(); }); } );
+
+        private async Task FindPixelsInSelectedRegion()
         {
             panelRegionAverage.Hide();
             pictureBoxLoading.Show();
 
-            //Task.Run(() => { Invoke((MethodInvoker) delegate { pictureBoxLoading.Show(); }); } );
-
-            /*Task.Delay(1000).ContinueWith(t =>
-            {
-                Invoke((MethodInvoker) delegate
-                {
-                    pictureBoxLoading.Show();
-                });
-            });*/
-
+            // Lock polygon drawing until calculation is finished
             _isReadyToDrawNextPolygon = false;
-            Bitmap bitmap = new Bitmap(_currentImage);
-            float R = 0, G = 0, B = 0;
-            float brightnessSum = 0.0f;
-            int counter = 0;
 
-            // For all pixels in width, height
-            for (int i = 0; i < pictureBox.Width; i++)
-            {
-                for (int j = 0; j < pictureBox.Height; j++)
-                {
-                    // If current pixel is inside our selected polygon, add it to a sum
-                    if (IsPointInPolygon(new PointF(i, j), _points.ToArray()))
-                    {
-                        //_currentImage.SetPixel(i, j, Color.Black);
+            ColorSumValues colorSumValues = await Task.Run(GetColorSumInPolygonAsync);
 
-                        brightnessSum += bitmap.GetPixel(i, j).GetBrightness();
-                        R += bitmap.GetPixel(i, j).R;
-                        G += bitmap.GetPixel(i, j).G;
-                        B += bitmap.GetPixel(i, j).B;
-                        counter++;
-                    }
-                }
-            }
-          
-            pictureBoxLoading.Hide();
             panelRegionAverage.Show();
+            pictureBoxLoading.Hide();
             
             // Set intensity value and intesity percentage labels
-            float averageBrightness = CalculateAverage(brightnessSum, counter);
+            float averageBrightness = CalculateAverage(colorSumValues.Brightness, colorSumValues.Counter);
 
             // If average brightness could not be calculated
             if ((int)averageBrightness == -1)
@@ -252,17 +239,49 @@ namespace ThemalCameraImageRecognition
             panelBar1.Width = (int)(averageBrightness * panelProgressBar1.Width);
 
             // Calculate average RGB color TODO: check if there is a better way to calculate RGB color average
-            int averageR = (int)CalculateAverage(R, counter);
-            int averageG = (int)CalculateAverage(G, counter);
-            int averageB = (int)CalculateAverage(B, counter);
+            int averageR = (int)CalculateAverage(colorSumValues.R, colorSumValues.Counter);
+            int averageG = (int)CalculateAverage(colorSumValues.G, colorSumValues.Counter);
+            int averageB = (int)CalculateAverage(colorSumValues.B, colorSumValues.Counter);
         
             // Update Region average color and panel color
             labelRegionColor.Text = $"[{averageR}, {averageG}, {averageB}]";
             panelRegionColor.BackColor = Color.FromArgb(255, averageR, averageG, averageB);
 
+            // Unlock polygon drawing
             _isReadyToDrawNextPolygon = true;
         }
 
+        private ColorSumValues GetColorSumInPolygonAsync()
+        {
+            ColorSumValues colorSumValues = new ColorSumValues();
+            Bitmap bitmap = new Bitmap(_currentImage);
+
+            colorSumValues.Brightness = 0;
+            colorSumValues.R = 0;
+            colorSumValues.G = 0;
+            colorSumValues.B = 0;
+            colorSumValues.Counter = 0;
+
+            // For all pixels in width, height
+            for (int i = 0; i < pictureBox.Width; i++)
+            {
+                for (int j = 0; j < pictureBox.Height; j++)
+                {
+                    // If current pixel is inside our selected polygon, add it to a sum
+                    if (IsPointInPolygon(new PointF(i, j), _points.ToArray()))
+                    {
+                        colorSumValues.Brightness += bitmap.GetPixel(i, j).GetBrightness();
+                        colorSumValues.R += bitmap.GetPixel(i, j).R;
+                        colorSumValues.G += bitmap.GetPixel(i, j).G;
+                        colorSumValues.B += bitmap.GetPixel(i, j).B;
+                        colorSumValues.Counter++;
+                    }
+                }
+            }
+
+            return  colorSumValues;
+        }
+        
         // Just a simple average calculator
         private static float CalculateAverage(float sum, int counter)
         {
@@ -364,6 +383,19 @@ namespace ThemalCameraImageRecognition
             if (_currentImage is null || !_isReadyToDrawNextPolygon)
                 return;
 
+            if (!(Cursor.Current is null)) 
+                Cursor = new Cursor(Cursor.Current.Handle);
+
+            // localMousePosition starts counting [0, 0] from the starting point of pictureBox
+            var localMousePosition = pictureBox.PointToClient(Cursor.Position);
+
+            UpdatePixelInfoLabels(localMousePosition);
+
+            ShowPixelInfoLabels();
+
+            if (!_arePointsCleared)
+                return;
+
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
             {
                 Graphics graphics = pictureBox.CreateGraphics();
@@ -377,15 +409,7 @@ namespace ThemalCameraImageRecognition
                 _points.Add(e.Location);
             }
 
-            if (!(Cursor.Current is null)) 
-                Cursor = new Cursor(Cursor.Current.Handle);
 
-            // localMousePosition starts counting [0, 0] from the starting point of pictureBox
-            var localMousePosition = pictureBox.PointToClient(Cursor.Position);
-
-            UpdatePixelInfoLabels(localMousePosition);
-
-            ShowPixelInfoLabels();
         }
 
         private void pictureBox_MouseLeave(object sender, EventArgs e)
@@ -400,7 +424,9 @@ namespace ThemalCameraImageRecognition
             {
                 return;
             }
-                
+            
+            _arePointsCleared = true;
+
             // Clear point list to create a new polygon
             _points.Clear();
 
@@ -411,16 +437,23 @@ namespace ThemalCameraImageRecognition
             pictureBox.Invalidate();
         }
 
-        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        private async void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_currentImage is null || _points.Count < PolygonDrawPixelThreshold)
+            if (!_arePointsCleared)
+            {
+                return;
+            }
+
+            if (_currentImage is null || _points.Count < PolygonDrawPixelThreshold || !_isReadyToDrawNextPolygon)
             {
                 panelRegionAverage.Hide();
                 return;
             }
 
             DrawPolygon(_points.ToArray());
-            FindPixelsInSelectedRegion();
+            _arePointsCleared = false;
+
+            await FindPixelsInSelectedRegion();
         }
 
         private void btnClose_Click(object sender, EventArgs e)

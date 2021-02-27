@@ -223,8 +223,9 @@ namespace ThemalCameraImageRecognition
             // 
             // pictureBoxLoading
             // 
+            this.pictureBoxLoading.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(38)))), ((int)(((byte)(42)))));
             this.pictureBoxLoading.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLoading.Image")));
-            this.pictureBoxLoading.Location = new System.Drawing.Point(0, 315);
+            this.pictureBoxLoading.Location = new System.Drawing.Point(0, 170);
             this.pictureBoxLoading.Name = "pictureBoxLoading";
             this.pictureBoxLoading.Size = new System.Drawing.Size(309, 140);
             this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
