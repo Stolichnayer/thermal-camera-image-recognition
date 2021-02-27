@@ -197,10 +197,12 @@ namespace ThemalCameraImageRecognition
 
             // Update intensity percentage label value
             labelIntensityPercent.Text = (pixelColor.GetBrightness() * 100).ToString("0.00") + "%";
-  
+
             // Resize percentage bar to the appropriate width to depict the percentage optically
             panelBar2.Width = (int)(pixelColor.GetBrightness() * panelProgressBar2.Width);
         }
+            
+        
         
       /*Invoke((MethodInvoker) delegate
             {
@@ -217,7 +219,7 @@ namespace ThemalCameraImageRecognition
             // Lock polygon drawing until calculation is finished
             _isReadyToDrawNextPolygon = false;
 
-            ColorSumValues colorSumValues = await Task.Run(GetColorSumInPolygonAsync);
+            ColorSumValues colorSumValues = await Task.Run(GetColorSumInPolygon);
 
             panelRegionAverage.Show();
             pictureBoxLoading.Hide();
@@ -251,7 +253,7 @@ namespace ThemalCameraImageRecognition
             _isReadyToDrawNextPolygon = true;
         }
 
-        private ColorSumValues GetColorSumInPolygonAsync()
+        private ColorSumValues GetColorSumInPolygon()
         {
             ColorSumValues colorSumValues = new ColorSumValues();
             Bitmap bitmap = new Bitmap(_currentImage);
